@@ -4,19 +4,21 @@ require "nn/basicNeuronModel/errorCorrectionLearningMethod.rb"
 誤り訂正学習法（教師付き）　論理演算
 """
 
-def study(n, _in, teacher, threshold)
+def study(aN, aIn, aTeacher, aThreshold)
     weight = [0,0,0]
     out = -1 
     print "in:"
-    p _in
+    p aIn
     print "teacher:"
-    puts teacher
-    until out == teacher
+    puts aTeacher
+    until out == aTeacher
         # 基本的にはココでweight(重み)の訂正してる。
         # teacher(理想の答え)と一致したら重みを保存することで
         # 学習したことになる。
-        out = n.Neuron(_in, weight, threshold)
-        weight = n.ErrorCorrection(weight, out, teacher)
+        aN.weight = weight
+        aN.threshold = aThreshold
+        out = aN.Neuron(aIn)
+        weight = aN.ErrorCorrection(weight, out, aTeacher)
         print "weight:"
         p weight
     end
@@ -26,13 +28,15 @@ def study(n, _in, teacher, threshold)
     return weight
 end
 
-def test(n, problem, threshold)
-    problem[:in].each_with_index do |_in, i|
+def test(aN, aProblem, aThreshold)
+    aProblem[:in].each_with_index do |_in, i|
         print "in:"
         p _in
         print "weight:"
-        p problem[:memory][i]
-        out = n.Neuron(_in, problem[:memory][i], threshold)
+        p aProblem[:memory][i]
+        aN.weight = aProblem[:memory][i]
+        aN.threshold = aThreshold
+        out = aN.Neuron(_in)
         print "out:"
         puts out
         puts

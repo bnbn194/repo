@@ -5,14 +5,19 @@ require "nn/base.rb"
 """
 
 class BasicNeuronModel < Base
-    def initialize()
+    attr_accessor :weight, :threshold
+    def initialize(aWeight=[],aThreshold=0)
+        """
+        aWeight:    重み（荷重）
+        aThreshold: しきい値
+        """
+        @weight = aWeight 
+        @threshold = aThreshold
     end
-    def Neuron(aIn, aWeight, aThreshold)
+    def Neuron(aIn)
         """
         *Arguments
         aIn :   入力
-        aWeight:    重み（荷重）
-        aThreshold: しきい値
 
         *Return value
         Σ(入力×重み)-しきい値>0となる時に1を返す。
@@ -23,20 +28,21 @@ class BasicNeuronModel < Base
         http://www.geocities.co.jp/SiliconValley-Cupertino/3384/nn/NN.html#model
         """
         totalAmount = 0.0;
-        if aIn.size > aWeight.size then
+        if aIn.size > @weight.size then
             error("Invalid input value")
             return
         end
         aIn.each_with_index do |lIn, i| 
-            totalAmount += lIn * aWeight[i];
+            totalAmount += lIn * @weight[i];
             #dump {
                 p [:i=>i, :in=>lIn, :totalAmount=>totalAmount]
             # }
-            if totalAmount > aThreshold then
-                return 1
-            end
         end
-        return 0
+        if totalAmount > @threshold then
+            return 1
+        else
+            return 0
+        end
     end
 end
 

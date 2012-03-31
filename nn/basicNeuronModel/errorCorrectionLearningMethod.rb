@@ -5,35 +5,37 @@ require "nn/base.rb"
 """
 
 class ErrorCorrectionLearningMethod < Base
-    def initialize
-        @learningRate = 0.1
+    attr_accessor :learningRate, :weight, :threshold
+    def initialize(aLearningRate=0.1, aWeight=0, aThreshold=1.5)
+        @learningRate = aLearningRate 
+        @weight = aWeight
+        @threshold = aThreshold
     end
-    attr_accessor :learningRate
-    def Neuron(aIn, aWeight, aThreshold)
+    def Neuron(aIn)
         """
         *Arguments
         aIn :   入力
-        aWeight:    重み（荷重）
-        aThreshold: しきい値
+        @weight:    重み（荷重）
+        @threshold: しきい値
         """
         totalAmount = 0.0;
-        if aIn.size > aWeight.size then
+        if aIn.size > @weight.size then
             error("Invalid input value")
             return
         end
         aIn.each_with_index do |lIn, i| 
-            totalAmount += lIn * aWeight[i];
+            totalAmount += lIn * @weight[i];
             #dump {
                 p [:i=>i, :in=>lIn, :totalAmount=>totalAmount]
             # }
-            if totalAmount > aThreshold then
+            if totalAmount > @threshold then
                 return 1
             end
         end
         return 0
     end
 
-    def ErrorCorrection(aWeight, aOut, aTeacher) 
+    def ErrorCorrection(aOldWeight, aOut, aTeacher) 
         """
             (@teacher - out) = {
                 @teacher == 1 & out == 0    のとき  1
@@ -42,7 +44,7 @@ class ErrorCorrectionLearningMethod < Base
             }
         """
         newWeight = []
-        aWeight.each_with_index do |oldWeight, i|
+        aOldWeight.each_with_index do |oldWeight, i|
             newWeight[i] = oldWeight + @learningRate * (aTeacher - aOut)
         end
         return newWeight;

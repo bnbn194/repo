@@ -1,4 +1,4 @@
-require "nn/basicNeuronModel.rb"
+require "nn/basicNeuronModel/basicNeuronModel.rb"
 
 """
 ニューロンのモデルで論理演算
@@ -15,17 +15,17 @@ x_1 |   x_2 |   y
 1   |   1   |   1
 """
 puts "*AND演算"
-weight = [1,1]
-threshold = 1.5
+n.weight = [1,1]
+n.threshold = 1.5
 
 _in = [0,0]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
 _in = [0,1]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
 _in = [1,0]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
 _in = [1,1]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
 
 
 # OR演算
@@ -38,14 +38,14 @@ x_1 |   x_2 |   y
 """
 puts
 puts "*OR演算"
-weight = [1,1]
-threshold = 0.5
+n.weight = [1,1]
+n.threshold = 0.5
 
 _in = [0,0]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
 _in = [0,1]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
 _in = [1,0]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
 _in = [1,1]
-puts n.Neuron(_in, weight, threshold)
+puts n.Neuron(_in)
