@@ -1,7 +1,7 @@
 ニューラルネットワーク関係
 
-./basicNeuronModel
+./basicNeuronModel/
 基本的なニューロンのモデル。学習など
 
-./network
+./network/
 複数のニューロンを組み合わせてネットワークを構成しているもの
