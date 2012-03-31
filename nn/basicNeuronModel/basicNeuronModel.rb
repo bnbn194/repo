@@ -1,5 +1,9 @@
 require "nn/base.rb"
 
+"""
+ニューロンのモデル
+"""
+
 class BasicNeuronModel < Base
     def initialize()
     end
@@ -34,6 +38,5 @@ class BasicNeuronModel < Base
         end
         return 0
     end
-
 end
 

@@ -1,5 +1,9 @@
 require "nn/base.rb"
 
+"""
+誤り訂正学習法（教師付き）
+"""
+
 class ErrorCorrectionLearningMethod < Base
     def initialize
         @learningRate = 0.1

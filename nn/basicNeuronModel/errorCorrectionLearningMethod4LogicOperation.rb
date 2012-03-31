@@ -1,5 +1,9 @@
 require "nn/basicNeuronModel/errorCorrectionLearningMethod.rb"
 
+"""
+誤り訂正学習法（教師付き）　論理演算
+"""
+
 def study(n, _in, teacher, threshold)
     weight = [0,0,0]
     out = -1 

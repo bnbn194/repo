@@ -1,5 +1,9 @@
 require "nn/basicNeuronModel.rb"
 
+"""
+ニューロンのモデルで論理演算
+"""
+
 n = BasicNeuronModel.new
 
 # AND演算
