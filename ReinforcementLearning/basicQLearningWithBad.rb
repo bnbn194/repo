@@ -1,8 +1,9 @@
-require "ReinforcementLearning/point.rb"
+require "ReinforcementLearning/point.rb" 
+# 減点あり
 
 class Basic
     WIDTH = 5
-    HEIGHT = 2
+    HEIGHT = 5
     ALPHA = 0.8
     GAMMA = 0.5
     def initialize
@@ -22,38 +23,50 @@ class Basic
         @r = Array.new(HEIGHT).map! {
             Array.new(WIDTH,0)
         } 
-        @r[0][4] = 100
-        @r[1][1] = -100
+        @r[2][4] = 100
+        @r[1][2] = -100
         # State
-        @s = Point.new(0,0)
+        @start = Point.new(0,0)
+        @s = @start 
 
         1000000.times do |t|
+            dump2DimWithState(@r, @s)
             s = @s
             canTo = canToMove(s, @action)
 
             # 次の行動とその先のQ値を取得
             result = action(s, @action, canTo)
             nextPoint = result[0]
-            nextQMax = result[1]
+            nextQValue = result[1]
             nextQIndex = result[2]
 
-
-
-            puts nextQIndex
-            # Q値の更新
-            if nextQIndex != nil and nextQMax != 0 then
-                puts "calll"
-                @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] + 
-                    ALPHA * (GAMMA * nextQMax - @q[@sBefore.y][@sBefore.x][nextQIndex])
+            # 手前から現在位置までのQ値の更新
+            if nextQIndex != nil and nextQValue > 0 then
+                puts "Q値が最大となる方を選択しました。"
+                # 元がマイナスだと公式の符号も逆にすればいい
+                if @q[@sBefore.y][@sBefore.x][nextQIndex] < 0 then
+                    @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] - 
+                            ALPHA * (GAMMA * nextQValue + @q[@sBefore.y][@sBefore.x][nextQIndex])
+                else
+                    @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] + 
+                            ALPHA * (GAMMA * nextQValue - @q[@sBefore.y][@sBefore.x][nextQIndex])
+                end
+            else
+                puts "Q値が存在しないためランダムで選択しました。"
             end
 
-            dump2DimWithState(@r, @s)
             @sBefore = @s
             @s = nextPoint
 
-            if @r[@s.y][@s.x] > 0 then
-                puts 'goal!!'
-                # ゴールに到達後、手前に戻りQ値を更新
+            if @r[@s.y][@s.x] > 0 or @r[@s.y][@s.x] < 0 then
+                dump2DimWithState(@r, @s)
+                if @r[@s.y][@s.x] > 0 then
+                    puts '*** ゴールに到達しました。 ***'
+                end
+                if @r[@s.y][@s.x] < 0 then
+                    puts '*** 穴に到達しました。 ***'
+                end
+                # 報酬に到達後、手前に戻りQ値を更新
                 # nextQIndex値を逆取得
                 tmpAction = Point.new(@s.x - @sBefore.x, @s.y - @sBefore.y)
                 @action.each_with_index do |a, i|
@@ -62,32 +75,17 @@ class Basic
                     end
                 end
 
-                @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] + 
-                        ALPHA * (GAMMA *  @r[@s.y][@s.x] - @q[@sBefore.y][@sBefore.x][nextQIndex])
-                p @q
-                @s.clear
-                sleep(1)
-            end
-            if @r[@s.y][@s.x] < 0 then
-                puts 'ana!!'
-                # ゴールに到達後、手前に戻りQ値を更新
-                # nextQIndex値を逆取得
-                tmpAction = Point.new(@s.x - @sBefore.x, @s.y - @sBefore.y)
-                @action.each_with_index do |a, i|
-                    if tmpAction.x == a.x and tmpAction.y == a.y then
-                        nextQIndex = i
-                    end
+                
+                if @q[@sBefore.y][@sBefore.x][nextQIndex] == 0 then
+                    @q[@sBefore.y][@sBefore.x][nextQIndex] = @r[@s.y][@s.x]
                 end
-
-                @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] + 
-                        ALPHA * (GAMMA *  @r[@s.y][@s.x] - @q[@sBefore.y][@sBefore.x][nextQIndex])
                 p @q
-                @s.clear
+                @s = @start
+                @sBefore.clear 
                 sleep(1)
             end
 
-
-            sleep(0.01)
+            sleep(0.1)
         end
     end
 
@@ -111,37 +109,26 @@ class Basic
             canTo << 3
         end
         
-        return canTo.sort_by{rand}
+        return canTo.sort_by {rand()}
     end
 
     def action(aState, aAction, aCanTo)
-        qMax = 0
+        qValue = 0
         nextPoint = nil
         qIndex = nil
         # 移動できる場所すべて探索対象
         aCanTo.each do |canToIndex|
             # 周辺でQ値が最大となる場所を探す
-            if @q[aState.y][aState.x][canToIndex] > qMax then
-                qMax = @q[aState.y][aState.x][canToIndex]
+            if @q[aState.y][aState.x][canToIndex] >= qValue then
+                qValue = @q[aState.y][aState.x][canToIndex]
+                puts qValue
                 nextPoint = Point.new(aState.x + aAction[canToIndex].x,
                                       aState.y + aAction[canToIndex].y)
                 qIndex = canToIndex
             end
-            if @q[aState.y][aState.x][canToIndex] < 0 then
-                qMax = @q[aState.y][aState.x][canToIndex]
-                nextPoint = Point.new(aState.x + aAction[canToIndex].x,
-                                      aState.y + aAction[canToIndex].y)
-                qIndex = canToIndex
-            end
-        end
-        
-        # Q値が最大となる場所が見つからない（初期探索など）
-        # ランダムで移動
-        if nextPoint == nil or qMax < 0 then
-            nextPoint = moveRandom(aState, aAction, aCanTo)
         end
 
-        return [nextPoint, qMax, qIndex]
+        return [nextPoint, qValue, qIndex]
     end
 
     def moveRandom(aPoint, aAction, aCanTo)
@@ -169,6 +156,10 @@ class Basic
                 print "|"
                 if aState.equals(Point.new(xi,yi)) then
                     print "*"
+                elsif x < 0 then
+                    print "X"
+                elsif x > 0 then
+                    print "#"
                 else
                     print x
                 end
