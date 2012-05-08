@@ -24,7 +24,7 @@ class Basic
             Array.new(WIDTH,0)
         } 
         @r[2][4] = 100
-        @r[1][2] = -100
+        @r[0][2] = -100
         # State
         @start = Point.new(0,0)
         @s = @start 
@@ -46,10 +46,10 @@ class Basic
                 # 元がマイナスだと公式の符号も逆にすればいい
                 if @q[@sBefore.y][@sBefore.x][nextQIndex] < 0 then
                     @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] - 
-                            ALPHA * (GAMMA * nextQValue + @q[@sBefore.y][@sBefore.x][nextQIndex])
+                            ALPHA * (@r[@s.y][@s.x] + GAMMA * nextQValue + @q[@sBefore.y][@sBefore.x][nextQIndex])
                 else
                     @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] + 
-                            ALPHA * (GAMMA * nextQValue - @q[@sBefore.y][@sBefore.x][nextQIndex])
+                            ALPHA * (@r[@s.y][@s.x] + GAMMA * nextQValue - @q[@sBefore.y][@sBefore.x][nextQIndex])
                 end
             else
                 puts "Q値が存在しないためランダムで選択しました。"
@@ -121,7 +121,6 @@ class Basic
             # 周辺でQ値が最大となる場所を探す
             if @q[aState.y][aState.x][canToIndex] >= qValue then
                 qValue = @q[aState.y][aState.x][canToIndex]
-                puts qValue
                 nextPoint = Point.new(aState.x + aAction[canToIndex].x,
                                       aState.y + aAction[canToIndex].y)
                 qIndex = canToIndex

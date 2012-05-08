@@ -42,7 +42,7 @@ class Basic
             if nextQIndex != nil and nextQMax != 0 then
                 puts "Q値が最大の方を選択しました。"
                 @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] + 
-                    ALPHA * (GAMMA * nextQMax - @q[@sBefore.y][@sBefore.x][nextQIndex])
+                    ALPHA * (@r[@s.y][@s.x] + GAMMA * nextQMax - @q[@sBefore.y][@sBefore.x][nextQIndex])
             else
                 puts "Q値が存在しないためランダムで選択しました。"
             end
