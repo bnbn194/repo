@@ -5,7 +5,7 @@ require "nn/base.rb"
 """
 
 class BasicNeuronModel < Base
-    attr_accessor :weight, :threshold
+    attr_accessor :weight, :threshold, :output
     def initialize(aWeight=[],aThreshold=0)
         """
         aWeight:    重み（荷重）
@@ -13,6 +13,7 @@ class BasicNeuronModel < Base
         """
         @weight = aWeight 
         @threshold = aThreshold
+        @output = 0
     end
     def Neuron(aIn)
         """

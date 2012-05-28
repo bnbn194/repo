@@ -3,7 +3,7 @@ require "ReinforcementLearning/point.rb"
 class Basic
     WIDTH = 6
     HEIGHT = 4
-    ALPHA = 0.2
+    ALPHA = 0.8
     GAMMA = 0.5
     def initialize
         @action = [
@@ -26,8 +26,11 @@ class Basic
         # State
         @start = Point.new(0,1)
         @s = @start 
+        @countT = 0
         @countStudy = 0
+        @countStudyCheck = 0
         @countRandom = 0
+        @countRandomAmount = 0
         @averageCountRandom = 0
         @averageCountStudy = 0
         @countTry = 1
@@ -37,14 +40,24 @@ class Basic
             s = @s
             canTo = canToMove(s, @action)
 
-            # 次の行動とその先のQ値を取得
-            result = action(s, @action, canTo)
-            nextPoint = result[0]
-            nextQMax = result[1]
-            nextQIndex = result[2]
+            if @countStudyCheck > 50 then
+                nextPoint = moveRandom(s, @action, canTo)
+                nextQIndex = nil
+                nextQMax = nil
+                @countStudyCheck = 0
+                puts "***無限ループが発生したためランダム移動します***"
+                sleep(0.5)
+            else
+                # 次の行動とその先のQ値を取得
+                result = action(s, @action, canTo)
+                nextPoint = result[0]
+                nextQMax = result[1]
+                nextQIndex = result[2]
+            end
 
             # 手前から現在位置までのQ値の更新
             if nextQIndex != nil and nextQMax != 0 then
+                @countStudyCheck += 1
                 @countStudy += 1
                 #puts "Q値が最大の方を選択しました。"
                 @q[@sBefore.y][@sBefore.x][nextQIndex] = @q[@sBefore.y][@sBefore.x][nextQIndex] + 
@@ -52,12 +65,14 @@ class Basic
             else
                 #puts "Q値が存在しないためランダムで選択しました。"
                 @countRandom += 1
+                @countRandomAmount += 1
             end
 
             @sBefore = @s
             @s = nextPoint
 
             if @r[@s.y][@s.x] > 0 then
+                @countTry += 1
                 dump2DimWithState(@r, @s)
                 dumpQDim(@q)
                 puts '*** ゴールに到達しました。 ***'
@@ -79,23 +94,20 @@ class Basic
 
                 if @countRandom == 0 then
                 print "ランダム試行数"
-                puts @countRandom
+                puts @countRandomAmount
                 print "学習回数"
-                puts @countStudy
+                puts @countTry
                 puts "👇(Q値が保存されている状態でスタート地点からやり直す。)"
                 print "試行回数"
-                puts @countTry
+                puts @countT
                     puts "学習完了しています。"
                     @countStudy = 0
-                    @countTry += 1
-                    sleep(8)
+                    sleep(6)
                 end
-
                 @countRandom = 0
-                sleep(1)
             end
                 print 'ランダム試行数'
-                puts @countRandom
+                puts @countRandomAmount
                 print '学習回数'
                 puts @countStudy
                 puts '👇(Q値が保存されている状態でスタート地点からやり直す。)'
@@ -182,24 +194,24 @@ class Basic
                         
                     if m == 0 then
                         print '   '
-                        print aArray[y][x][3].floor
+                        print aArray[y][x][3]
                         (3 - aArray[y][x][3].floor.to_s.size).times do |t|
                             print ' '
                         end
                         print '   '
                     elsif m == 1 then
-                        print aArray[y][x][1].floor
+                        print aArray[y][x][1]
                         (3 - aArray[y][x][1].floor.to_s.size).times do |t|
                             print ' '
                         end
                         print '   '
-                        print aArray[y][x][0].floor
+                        print aArray[y][x][0]
                         (3 - aArray[y][x][0].floor.to_s.size).times do |t|
                             print ' '
                         end
                     elsif m == 2 then
                         print '   '
-                        print aArray[y][x][2].floor
+                        print aArray[y][x][2]
                         (3 - aArray[y][x][2].floor.to_s.size).times do |t|
                             print ' '
                         end
