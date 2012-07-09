@@ -1,7 +1,28 @@
 
 class Network
     def initialize
+        @currentPath = './sdnn'
+        @symbolPath = @currentPath + '/Symbol.txt'
     end
+    def encodeNumToSymbol(aNum)
+        """ 数字をシンボル（±1）の羅列に変換 """
+        """ 数字以外の文字などにも対応できるようにハッシュで """
+        symbolRelation = Hash.new
+        open(@symbolPath) do |file|
+            file.each do |line|
+                tmp = line.split("=>")
+                num = tmp[0]
+                symbol = tmp[1].delete("\r\n")
+                symbolRelation[num] = symbol
+            end
+        end
+        if symbolRelation.key?(aNum.to_s) then
+            return symbolRelation[aNum.to_s]
+        else
+            return false
+        end
+    end
+
     def modify(aSymbol, aModifier)
         """ 修飾パターンの並び替え """
         aModifier = permutation(aModifier)
@@ -33,3 +54,4 @@ end
 
 n = Network.new
 p n.modify([1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1,1,-1],[1,1,1,-1,-1,-1,1,1,1,1,1,1,1,-1,-1,-1])
+p n.encodeNumToSymbol(80)
