@@ -1,5 +1,6 @@
 require "./nn/basicNeuronModel/basicNeuronModelV2.rb"
 
+
 class Network
     def initialize
         @currentPath = './sdnn'
@@ -171,30 +172,3 @@ class Network
 
 end
 
-n = Network.new
-inputLayer = [1,1]
-middleLayer = n.makeMiddleLayer(inputLayer)
-outputLayer = n.makeOutputLayer(middleLayer, 500)
-
-[60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60,60].each do |num|
-    inputLayer = [num-7,num-5]
-    middleLayer = n.makeMiddleLayer(inputLayer)
-
-     n.checkFireAtOutputLayer(outputLayer, middleLayer)
-    result = n.getAmountValueOfOutput(outputLayer)
-    puts result
-    outputLayer = n.fixWeight(num, result, 0.9999, outputLayer)
-    result = n.getAmountValueOfOutput(outputLayer)
-    puts result
-end
-
-num = 60 
-    inputLayer = [num-7,num-5]
-    middleLayer = n.makeMiddleLayer(inputLayer)
-
-     n.checkFireAtOutputLayer(outputLayer, middleLayer)
-    result = n.getAmountValueOfOutput(outputLayer)
-    puts result
-    outputLayer = n.fixWeight(num, result, 0.5, outputLayer)
-    result = n.getAmountValueOfOutput(outputLayer)
-    puts result
