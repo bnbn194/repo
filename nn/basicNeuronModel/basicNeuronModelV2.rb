@@ -37,15 +37,18 @@ class BasicNeuronModel < Base
         end
         aIn.each_with_index do |lIn, i| 
             totalAmount += lIn * @weight[i];
+            """
             #dump {
                 p [:i=>i, :in=>lIn, :totalAmount=>totalAmount]
             # }
+            """
         end
         if totalAmount > @threshold then
-            return 1
+            @output = 1
         else
-            return -1
+            @output = -1
         end
+        return @output
     end
 end
 
